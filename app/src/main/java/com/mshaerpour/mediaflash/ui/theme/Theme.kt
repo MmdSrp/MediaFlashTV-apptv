@@ -4,7 +4,6 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
-import androidx.tv.material3.ExperimentalTvMaterial3Api
 
 /**
  * Windows 11-inspired dark theme.
@@ -35,13 +34,12 @@ private val WindowsDarkScheme = darkColorScheme(
     onError = TextPrimary,
 )
 
-@OptIn(ExperimentalTvMaterial3Api::class)
 @Composable
 fun MediaFlashTheme(
     useDarkTheme: Boolean = true,
     content: @Composable () -> Unit
 ) {
-    val colorScheme = if (isSystemInDarkTheme() || useDarkTheme) WindowsDarkScheme else WindowsDarkScheme
+    val colorScheme = WindowsDarkScheme
     MaterialTheme(
         colorScheme = colorScheme,
         typography = WindowsTypography,
