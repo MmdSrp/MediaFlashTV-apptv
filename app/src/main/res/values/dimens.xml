@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <bool name="is_tv">true</bool>
+    <!-- Windows 11-style sizing -->
+    <dimen name="screen_edge_padding">48dp</dimen>
+    <dimen name="card_padding">12dp</dimen>
+    <dimen name="card_corner">8dp</dimen>
+    <dimen name="grid_spacing">14dp</dimen>
+    <dimen name="footer_height">32dp</dimen>
+</resources>

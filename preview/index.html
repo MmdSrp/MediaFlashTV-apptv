@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>Media Flash — Windows 11 Style UI Preview</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;900&display=swap');
+
+  :root {
+    /* Windows 11 Mica + Acrylic dark palette */
+    --mica-deep:    #1A1A1A;
+    --mica:         #1F1F1F;
+    --mica-elev:    #232323;
+    --acrylic:      #2B2B2B;
+    --acrylic-alt:  #323232;
+    --acrylic-hov:  #3A3A3A;
+    --acrylic-foc:  #383838;
+    --stroke-sub:   #383838;
+    --stroke-def:   #404040;
+    --stroke-str:   #565656;
+
+    /* Brand accent (emerald) */
+    --accent:       #00C896;
+    --accent-bri:   #39E5B5;
+    --accent-dim:   #007F66;
+    --accent-sub:   rgba(0, 200, 150, 0.16);
+
+    /* Text */
+    --text:         #FFFFFF;
+    --text-sec:     #C5C5C5;
+    --text-ter:     #9A9A9A;
+    --text-dis:     #6B6B6B;
+    --text-on-ac:   #0A1F18;
+
+    /* File type colors */
+    --folder:       #FFD56B;
+    --video:        #4CC2FF;
+    --audio:        #E97298;
+    --image:        #7CE0C0;
+    --subtitle:     #B7A4FF;
+    --document:     #74A9FF;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: var(--mica-deep);
+    color: var(--text);
+    font-family: 'Vazirmatn', 'Segoe UI Variable', 'Segoe UI', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 32px 16px 64px;
+    background: radial-gradient(circle at 50% 0%, var(--mica-elev) 0%, var(--mica-deep) 60%);
+  }
+
+  /* ---------- Top header (preview only, not part of app) ---------- */
+  .header-bar {
+    width: 1280px; max-width: 100%; margin-bottom: 24px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .header-bar h1 { font-size: 22px; font-weight: 600; letter-spacing: -0.3px; }
+  .header-bar .lang-pill {
+    display: inline-flex; gap: 6px; align-items: center;
+    background: var(--acrylic); border: 1px solid var(--stroke-sub);
+    padding: 7px 12px; border-radius: 6px;
+    font-size: 11px; color: var(--text-sec);
+  }
+  .lang-pill .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+
+  /* ---------- The TV "screen" ---------- */
+  .tv-frame {
+    position: relative;
+    width: 1280px; max-width: 100%;
+    aspect-ratio: 16 / 9;
+    background: var(--mica-deep);
+    border: 6px solid #161616;
+    border-radius: 14px;
+    box-shadow:
+      0 0 0 1px #2c333c inset,
+      0 30px 80px rgba(0, 0, 0, 0.7),
+      0 0 80px rgba(0, 200, 150, 0.06);
+    overflow: hidden;
+  }
+  .tv-frame::after {
+    content: '';
+    position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(120deg, rgba(255,255,255,0.03) 0%, transparent 30%, transparent 100%);
+  }
+  .screen { position: absolute; inset: 0; display: flex; flex-direction: row; }
+
+  /* ---------- Sidebar (Win11 NavigationView) ---------- */
+  .sidebar {
+    width: 240px;
+    flex-shrink: 0;
+    background: linear-gradient(180deg, var(--mica-elev), rgba(26,26,26,0.98));
+    padding: 18px 10px;
+    display: flex; flex-direction: column; gap: 2px;
+    border-left: 1px solid var(--stroke-sub);
+  }
+  .brand {
+    display: flex; align-items: center; gap: 12px;
+    padding: 4px 10px 16px;
+  }
+  .brand .logo {
+    width: 38px; height: 38px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-dim));
+    display: flex; align-items: center; justify-content: center;
+    color: var(--mica-deep); font-size: 20px; font-weight: 700;
+  }
+  .brand .title { font-size: 15px; font-weight: 600; letter-spacing: -0.1px; }
+  .brand .sub { font-size: 11px; color: var(--text-sec); }
+
+  .nav-btn {
+    display: flex; align-items: center; gap: 12px;
+    height: 40px; padding: 0 8px;
+    border-radius: 6px;
+    color: var(--text-sec); font-size: 14px;
+    cursor: pointer;
+    transition: background .12s, color .12s;
+  }
+  .nav-btn .marker {
+    width: 3px; height: 14px; border-radius: 50%;
+    background: transparent;
+    transition: height .12s, background .12s;
+  }
+  .nav-btn .ic { width: 20px; height: 20px; flex-shrink: 0; }
+  .nav-btn:hover { background: rgba(255,255,255,0.05); }
+  .nav-btn.active {
+    background: var(--accent-sub);
+    color: var(--text);
+  }
+  .nav-btn.active .marker { height: 18px; background: var(--accent); }
+  .nav-btn.active .ic { color: var(--accent); }
+  .nav-btn.active .label { color: var(--text); font-weight: 600; }
+  .sidebar-spacer { flex: 1; }
+
+  /* ---------- Main area ---------- */
+  .main { flex: 1; padding: 20px 28px 0; display: flex; flex-direction: column; overflow: hidden; }
+  .page-title { font-size: 30px; font-weight: 600; letter-spacing: -0.3px; }
+  .page-sub { font-size: 14px; color: var(--text-sec); margin-top: 4px; }
+
+  .pages { flex: 1; position: relative; overflow: hidden; margin-top: 18px; }
+  .page { position: absolute; inset: 0; display: none; flex-direction: column; gap: 18px; }
+  .page.active { display: flex; }
+
+  /* ---------- Command pill button (Win11 toolbar) ---------- */
+  .cmd-bar { display: flex; gap: 8px; }
+  .cmd-pill {
+    height: 36px;
+    border-radius: 6px;
+    background: var(--acrylic);
+    border: 1px solid var(--stroke-sub);
+    color: var(--text);
+    font-size: 13px; font-weight: 500;
+    padding: 0 14px;
+    display: inline-flex; align-items: center; gap: 8px;
+    cursor: pointer;
+    transition: background .12s, border-color .12s;
+  }
+  .cmd-pill:hover { background: var(--acrylic-hov); border-color: var(--stroke-def); }
+  .cmd-pill .ic { width: 16px; height: 16px; color: var(--accent); }
+
+  /* ---------- USB cards (Home) ---------- */
+  .usb-row { display: flex; gap: 16px; overflow-x: auto; padding-bottom: 4px; }
+  .usb-card {
+    width: 280px; height: 180px;
+    border-radius: 8px;
+    background: var(--acrylic);
+    border: 1px solid var(--stroke-sub);
+    padding: 20px;
+    display: flex; flex-direction: column; justify-content: space-between;
+    cursor: pointer;
+    transition: border-color .12s;
+    flex-shrink: 0;
+  }
+  .usb-card:hover, .usb-card.focused { border-color: var(--accent); }
+  .usb-card .head { display: flex; align-items: center; gap: 12px; }
+  .usb-card .icon-tile {
+    width: 40px; height: 40px;
+    border-radius: 8px;
+    background: var(--accent-sub);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--accent);
+  }
+  .usb-card .icon-tile svg { width: 22px; height: 22px; }
+  .usb-card .name { font-size: 16px; font-weight: 600; letter-spacing: -0.1px; }
+  .usb-card .sub { font-size: 11px; color: var(--text-ter); }
+  .usb-card .capacity { font-size: 11px; color: var(--text-sec); }
+  .bar { height: 4px; background: var(--stroke-def); border-radius: 4px; overflow: hidden; margin: 4px 0; }
+  .bar > div { height: 100%; background: var(--accent); border-radius: 4px; }
+  .usb-card .free { font-size: 10px; color: var(--text-ter); }
+  .usb-card .open-btn {
+    background: var(--accent); color: black;
+    border-radius: 6px; padding: 10px; text-align: center;
+    font-size: 13px; font-weight: 600;
+    cursor: pointer;
+  }
+
+  /* ---------- Quick Access tiles ---------- */
+  .quick-row { display: flex; gap: 12px; }
+  .quick-tile {
+    width: 160px; height: 72px;
+    border-radius: 8px;
+    background: var(--acrylic);
+    border: 1px solid var(--stroke-sub);
+    padding: 16px;
+    display: flex; align-items: center; gap: 12px;
+    color: var(--text); font-size: 13px; font-weight: 500;
+    cursor: pointer;
+    transition: border-color .12s;
+  }
+  .quick-tile:hover, .quick-tile.focused { border-color: var(--accent); }
+  .quick-tile .icon-tile {
+    width: 32px; height: 32px; border-radius: 6px;
+    background: var(--accent-sub);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--accent);
+  }
+  .quick-tile .icon-tile svg { width: 18px; height: 18px; }
+
+  /* ---------- Browser toolbar ---------- */
+  .browser-toolbar {
+    display: flex; align-items: center; gap: 8px;
+    height: 48px;
+  }
+  .pill-btn {
+    width: 36px; height: 36px;
+    border-radius: 6px;
+    background: transparent;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text);
+    cursor: pointer;
+    transition: background .12s;
+  }
+  .pill-btn:hover, .pill-btn.focused { background: var(--acrylic-hov); }
+  .pill-btn svg { width: 18px; height: 18px; }
+  .breadcrumb {
+    flex: 1; height: 36px;
+    border-radius: 6px;
+    background: var(--mica-elev);
+    border: 1px solid var(--stroke-sub);
+    padding: 0 10px;
+    display: flex; align-items: center; gap: 2px;
+  }
+  .breadcrumb .crumb {
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: var(--text-sec); font-size: 12px;
+    cursor: pointer;
+  }
+  .breadcrumb .crumb.active { color: var(--text); font-weight: 600; }
+  .breadcrumb .crumb:hover { background: rgba(255,255,255,0.06); }
+  .breadcrumb .sep { color: var(--text-ter); font-size: 14px; }
+
+  .status-line {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 12px; color: var(--text-sec);
+    margin-top: -8px;
+  }
+  .status-line .right { color: var(--text-ter); font-size: 11px; }
+
+  /* ---------- Grid (Win11 Tiles view) ---------- */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 14px;
+  }
+  .file-card {
+    aspect-ratio: 1;
+    border-radius: 8px;
+    background: var(--acrylic);
+    border: 1px solid var(--stroke-sub);
+    padding: 8px;
+    display: flex; flex-direction: column; gap: 6px;
+    cursor: pointer;
+    transition: border-color .12s, background .12s;
+  }
+  .file-card:hover, .file-card.focused {
+    border-color: var(--accent);
+    background: var(--acrylic-foc);
+  }
+  .file-card .preview {
+    flex: 1;
+    border-radius: 6px;
+    background: var(--mica-elev);
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+    position: relative;
+  }
+  .file-card .preview svg, .file-card .preview .icon {
+    width: 64px; height: 64px;
+  }
+  .file-card .preview img.thumb {
+    width: 100%; height: 100%; object-fit: cover;
+  }
+  .file-card .name {
+    font-size: 12px; font-weight: 500; color: var(--text);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .file-card .meta { font-size: 10px; color: var(--text-ter); }
+  .file-card .type-chip {
+    position: absolute; top: 6px; left: 6px;
+    background: rgba(0,0,0,0.5);
+    color: white;
+    font-size: 9px; font-weight: 500;
+    letter-spacing: 0.3px;
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+  .file-card .fav-badge {
+    position: absolute; top: 6px; right: 6px;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: rgba(0,200,150,0.9);
+    color: white;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px;
+  }
+  .play-badge {
+    position: absolute;
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.55);
+    border: 1px solid rgba(255,255,255,0.25);
+    display: flex; align-items: center; justify-content: center;
+    color: white;
+  }
+  .play-badge svg { width: 22px; height: 22px; }
+
+  /* ---------- Video player (Win11 Media Player) ---------- */
+  .video-stage {
+    flex: 1; background: black; border-radius: 8px; position: relative; overflow: hidden;
+  }
+  .video-stage .poster { width: 100%; height: 100%; object-fit: cover; opacity: 0.7; }
+  .video-overlay-top {
+    position: absolute; top: 16px; left: 16px;
+    width: 38px; height: 38px;
+    background: rgba(0,0,0,0.5);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    color: white; cursor: pointer;
+  }
+  .video-overlay-top svg { width: 20px; height: 20px; }
+  .video-strip {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: linear-gradient(180deg, transparent, rgba(0,0,0,0.85));
+    padding: 18px 28px;
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .video-strip .progress { width: 100%; height: 3px; background: rgba(255,255,255,0.18); border-radius: 50px; overflow: hidden; }
+  .video-strip .progress > div { width: 24%; height: 100%; background: var(--accent); border-radius: 50px; }
+  .video-strip .row { display: flex; justify-content: space-between; align-items: center; }
+  .video-strip .time { color: white; font-size: 13px; font-weight: 500; }
+  .video-strip .controls { display: flex; gap: 12px; align-items: center; }
+  .vbtn {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+    color: white;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+  }
+  .vbtn.focused { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4); }
+  .vbtn.primary { background: var(--accent); color: black; width: 52px; height: 52px; }
+  .vbtn svg { width: 22px; height: 22px; }
+  .vbtn.primary svg { width: 28px; height: 28px; }
+
+  /* ---------- Music player ---------- */
+  .music-stage { display: flex; flex-direction: column; align-items: center; gap: 22px; padding: 16px 0; }
+  .album {
+    width: 240px; height: 240px;
+    border-radius: 16px;
+    background: radial-gradient(circle, rgba(233,114,152,0.55), var(--mica-elev) 60%, var(--mica-deep));
+    border: 1px solid var(--stroke-sub);
+    display: flex; align-items: center; justify-content: center;
+    color: rgba(255,255,255,0.9);
+  }
+  .album svg { width: 96px; height: 96px; }
+  .track { font-size: 22px; font-weight: 600; text-align: center; letter-spacing: -0.2px; }
+  .now-playing { font-size: 13px; color: var(--text-sec); margin-top: 4px; }
+  .progress-container { width: 55%; display: flex; flex-direction: column; gap: 6px; }
+  .progress-bar { width: 100%; height: 3px; background: rgba(255,255,255,0.18); border-radius: 50px; overflow: hidden; }
+  .progress-bar > div { width: 42%; height: 100%; background: var(--accent); border-radius: 50px; }
+  .progress-time { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-ter); }
+  .music-controls { display: flex; gap: 20px; align-items: center; margin-top: 8px; }
+
+  /* ---------- Image viewer (Win11 Photos) ---------- */
+  .image-stage { flex: 1; position: relative; background: black; border-radius: 8px; overflow: hidden; }
+  .image-stage img { width: 100%; height: 100%; object-fit: contain; }
+  .image-counter {
+    position: absolute; top: 20px; left: 50%; transform: translateX(-50%);
+    background: rgba(0,0,0,0.5);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: white; font-size: 12px; font-weight: 500;
+    padding: 6px 14px; border-radius: 50px;
+  }
+  .image-controls {
+    position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%);
+    background: rgba(0,0,0,0.65);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 50px;
+    padding: 8px 12px;
+    display: flex; gap: 8px;
+  }
+  .image-controls button {
+    width: 38px; height: 38px;
+    border: none; cursor: pointer;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+    color: white;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .image-controls button.primary { background: var(--accent); color: black; width: 44px; height: 44px; }
+
+  /* ---------- List view rows (Recent, Favorites, Search) ---------- */
+  .list-row {
+    height: 48px;
+    border-radius: 6px;
+    padding: 0 12px;
+    display: flex; align-items: center; gap: 12px;
+    cursor: pointer;
+    transition: background .12s;
+  }
+  .list-row:hover, .list-row.focused { background: var(--acrylic-foc); }
+  .list-row .icon-tile {
+    width: 32px; height: 32px;
+    border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .list-row .info { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+  .list-row .info .name { font-size: 13px; font-weight: 500; }
+  .list-row .info .meta { font-size: 11px; color: var(--text-ter); }
+  .list-row .trailing { color: var(--accent); }
+
+  /* ---------- Settings cards (Win11 Settings groups) ---------- */
+  .settings-card {
+    background: var(--acrylic);
+    border: 1px solid var(--stroke-sub);
+    border-radius: 8px;
+    padding: 20px;
+    display: flex; flex-direction: column; gap: 14px;
+  }
+  .settings-card .header { display: flex; align-items: center; gap: 12px; }
+  .settings-card .header .icon-tile {
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    background: var(--accent-sub);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--accent);
+  }
+  .settings-card .header .title { font-size: 15px; font-weight: 600; }
+  .settings-card .header .desc { font-size: 11px; color: var(--text-ter); }
+  .settings-card .body { padding-right: 48px; }
+  .lang-pill-btn {
+    width: 120px; height: 40px;
+    border-radius: 6px;
+    background: var(--acrylic-hov);
+    border: 2px solid var(--stroke-def);
+    color: var(--text);
+    font-size: 13px;
+    display: inline-flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    margin-left: 8px;
+  }
+  .lang-pill-btn.selected {
+    background: var(--accent-sub);
+    border-color: var(--accent);
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  /* ---------- Footer ---------- */
+  .footer {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    height: 32px;
+    background: linear-gradient(180deg, transparent, rgba(26,26,26,0.95));
+    display: flex; align-items: center; justify-content: center;
+    gap: 10px; padding-bottom: 4px;
+    z-index: 10;
+  }
+  .footer .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+  .footer .dot.dim { background: var(--accent); opacity: 0.6; }
+  .footer .text { font-size: 11px; color: var(--text-sec); font-weight: 500; letter-spacing: 0.4px; }
+
+  /* ---------- Page switcher (preview only) ---------- */
+  .controls {
+    margin-top: 24px;
+    display: flex; flex-wrap: wrap; gap: 8px;
+    justify-content: center;
+  }
+  .controls button {
+    background: var(--acrylic);
+    color: var(--text);
+    border: 1px solid var(--stroke-sub);
+    padding: 9px 16px;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background .12s, border-color .12s, color .12s;
+    font-family: inherit;
+  }
+  .controls button:hover { background: var(--acrylic-hov); border-color: var(--accent); }
+  .controls button.active { background: var(--accent); color: black; border-color: var(--accent); font-weight: 600; }
+
+  svg { fill: currentColor; display: block; }
+</style>
+</head>
+<body>
+
+<!-- Top header for preview only -->
+<div class="header-bar">
+  <h1>Media Flash — Windows 11 Style Preview</h1>
+  <div class="lang-pill">
+    <span class="dot"></span>
+    Android TV · 16:9 · 1920×1080
+  </div>
+</div>
+
+<!-- ===== The simulated TV screen ===== -->
+<div class="tv-frame">
+  <div class="screen">
+
+    <!-- ===== Sidebar (Win11 NavigationView) ===== -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo">M</div>
+        <div>
+          <div class="title">Media Flash</div>
+          <div class="sub">USB Media Center</div>
+        </div>
+      </div>
+      <div class="nav-btn active" data-page="home">
+        <span class="marker"></span>
+        <svg class="ic" viewBox="0 0 24 24"><path d="M10,4H4c-1.11,0 -2,0.89 -2,2v12c0,1.097 0.903,2 2,2h16c1.097,0 2,-0.903 2,-2V8c0,-1.11 -0.9,-2 -2,-2h-8l-2,-2z"/></svg>
+        <span class="label">خانه</span>
+      </div>
+      <div class="nav-btn" data-page="recent">
+        <span class="marker"></span>
+        <svg class="ic" viewBox="0 0 24 24"><path d="M13,3a9,9 0,0 0 -9,9L1,12l3.89,3.89 0.07,0.14L9,12L6,12a7,7 0 0 1 7,-7 7,7 0 0 1 7,7 7,7 0 0 1 -7,7c-1.93,0 -3.68,-0.79 -4.94,-2.06l-1.42,1.42A9,9 0 1 0 13,3zM12,8v5l4.28,2.54 0.72,-1.21 -3.5,-2.08L13,8z"/></svg>
+        <span class="label">اخیراً پخش‌شده</span>
+      </div>
+      <div class="nav-btn" data-page="favorites">
+        <span class="marker"></span>
+        <svg class="ic" viewBox="0 0 24 24"><path d="M12,21.35l-1.45,-1.32C5.4,15.36 2,12.28 2,8.5 2,5.42 4.42,3 7.5,3c1.74,0 3.41,0.81 4.5,2.09C13.09,3.81 14.76,3 16.5,3 19.58,3 22,5.42 22,8.5c0,3.78 -3.4,6.86 -8.55,11.54L12,21.35z"/></svg>
+        <span class="label">علاقه‌مندی‌ها</span>
+      </div>
+      <div class="nav-btn" data-page="search">
+        <span class="marker"></span>
+        <svg class="ic" viewBox="0 0 24 24"><path d="M15.5,14h-0.79l-0.28,-0.27a6.5,6.5 0 1 0 -0.7,0.7l0.27,0.28v0.79l5,4.99L20.49,19l-4.99,-5zM10,14a4,4 0 1 1 0,-8 4,4 0 0 1 0,8z"/></svg>
+        <span class="label">جستجو</span>
+      </div>
+      <div class="sidebar-spacer"></div>
+      <div class="nav-btn" data-page="settings">
+        <span class="marker"></span>
+        <svg class="ic" viewBox="0 0 24 24"><path d="M19.14,12.94c0.04,-0.3 0.06,-0.61 0.06,-0.94 0,-0.32 -0.02,-0.64 -0.07,-0.94l2.03,-1.58c0.18,-0.14 0.23,-0.41 0.12,-0.61l-1.92,-3.32c-0.12,-0.22 -0.37,-0.29 -0.59,-0.22l-2.39,0.96c-0.5,-0.38 -1.03,-0.7 -1.62,-0.94l-0.36,-2.54c-0.04,-0.24 -0.24,-0.41 -0.48,-0.41h-3.84c-0.24,0 -0.43,0.17 -0.47,0.41l-0.36,2.54c-0.59,0.24 -1.13,0.57 -1.62,0.94l-2.39,-0.96c-0.22,-0.08 -0.47,0 -0.59,0.22L2.74,8.87c-0.12,0.21 -0.08,0.47 0.12,0.61l2.03,1.58c-0.05,0.3 -0.07,0.63 -0.07,0.94s0.02,0.64 0.07,0.94l-2.03,1.58c-0.18,0.14 -0.23,0.41 -0.12,0.61l1.92,3.32c0.12,0.22 0.37,0.29 0.59,0.22l2.39,-0.96c0.5,0.38 1.03,0.7 1.62,0.94l0.36,2.54c0.05,0.24 0.24,0.41 0.48,0.41h3.84c0.24,0 0.44,-0.17 0.47,-0.41l0.36,-2.54c0.59,-0.24 1.13,-0.56 1.62,-0.94l2.39,0.96c0.22,0.08 0.47,0 0.59,-0.22l1.92,-3.32c0.12,-0.21 0.07,-0.47 -0.12,-0.61l-2.01,-1.58zM12,15.6c-1.98,0 -3.6,-1.62 -3.6,-3.6s1.62,-3.6 3.6,-3.6 3.6,1.62 3.6,3.6 -1.62,3.6 -3.6,3.6z"/></svg>
+        <span class="label">تنظیمات</span>
+      </div>
+    </aside>
+
+    <!-- ===== Main content area ===== -->
+    <main class="main">
+
+      <!-- ===== HOME PAGE ===== -->
+      <div class="page active" data-page="home">
+        <div>
+          <div class="page-title">انتخاب فلش USB</div>
+          <div class="page-sub">یک فلش USB به تلویزیون وصل کنید و از زیر انتخاب کنید</div>
+        </div>
+
+        <div class="cmd-bar">
+          <button class="cmd-pill" data-action="refresh">
+            <svg class="ic" viewBox="0 0 24 24"><path d="M17.65,6.35A7.958,7.958 0 0 0 12,4c-4.42,0 -7.99,3.58 -7.99,8s3.57,8 7.99,8c3.73,0 6.84,-2.55 7.73,-6h-2.08A5.99,5.99 0 0 1 12,18c-3.31,0 -6,-2.69 -6,-6s2.69,-6 6,-6c1.66,0 3.14,0.69 4.22,1.78L13,11h7V4l-2.35,2.35z"/></svg>
+            بروزرسانی
+          </button>
+        </div>
+
+        <div class="usb-row">
+          <div class="usb-card focused" data-action="open-usb">
+            <div class="head">
+              <div class="icon-tile"><svg viewBox="0 0 24 24"><path d="M15,7v4h4v8h-3v3h-2v-3h-2v-2h2V11h-4V7H8v4H4V3h2v4h1V3h2v4h1V3h2v4h1V3h2v4h2z" fill="currentColor"/></svg></div>
+              <div>
+                <div class="name">SanDisk 32GB</div>
+                <div class="sub">USB Drive · USB 3.0</div>
+              </div>
+            </div>
+            <div>
+              <div class="capacity">18.4 GB of 32.0 GB used</div>
+              <div class="bar"><div style="width:57%;"></div></div>
+              <div class="free">13.6 GB free</div>
+            </div>
+            <div class="open-btn">باز کردن</div>
+          </div>
+
+          <div class="usb-card">
+            <div class="head">
+              <div class="icon-tile"><svg viewBox="0 0 24 24"><path d="M15,7v4h4v8h-3v3h-2v-3h-2v-2h2V11h-4V7H8v4H4V3h2v4h1V3h2v4h1V3h2v4h1V3h2v4h2z" fill="currentColor"/></svg></div>
+              <div>
+                <div class="name">Kingston 64GB</div>
+                <div class="sub">USB Drive · USB 2.0</div>
+              </div>
+            </div>
+            <div>
+              <div class="capacity">41.2 GB of 64.0 GB used</div>
+              <div class="bar"><div style="width:64%;"></div></div>
+              <div class="free">22.8 GB free</div>
+            </div>
+            <div class="open-btn">باز کردن</div>
+          </div>
+
+          <div class="usb-card">
+            <div class="head">
+              <div class="icon-tile"><svg viewBox="0 0 24 24"><path d="M15,7v4h4v8h-3v3h-2v-3h-2v-2h2V11h-4V7H8v4H4V3h2v4h1V3h2v4h1V3h2v4h1V3h2v4h2z" fill="currentColor"/></svg></div>
+              <div>
+                <div class="name">Samsung FIT 128GB</div>
+                <div class="sub">USB Drive · USB 3.1</div>
+              </div>
+            </div>
+            <div>
+              <div class="capacity">92.7 GB of 128 GB used</div>
+              <div class="bar"><div style="width:72%;"></div></div>
+              <div class="free">35.3 GB free</div>
+            </div>
+            <div class="open-btn">باز کردن</div>
+          </div>
+        </div>
+
+        <div>
+          <div style="font-size: 16px; font-weight: 600;">Quick Access</div>
+        </div>
+        <div class="quick-row">
+          <div class="quick-tile" data-page="recent">
+            <div class="icon-tile"><svg viewBox="0 0 24 24"><path d="M13,3a9,9 0,0 0 -9,9L1,12l3.89,3.89 0.07,0.14L9,12L6,12a7,7 0 0 1 7,-7 7,7 0 0 1 7,7 7,7 0 0 1 -7,7c-1.93,0 -3.68,-0.79 -4.94,-2.06l-1.42,1.42A9,9 0 1 0 13,3zM12,8v5l4.28,2.54 0.72,-1.21 -3.5,-2.08L13,8z"/></svg></div>
+            <span>اخیراً پخش‌شده</span>
+          </div>
+          <div class="quick-tile" data-page="favorites">
+            <div class="icon-tile"><svg viewBox="0 0 24 24"><path d="M12,21.35l-1.45,-1.32C5.4,15.36 2,12.28 2,8.5 2,5.42 4.42,3 7.5,3c1.74,0 3.41,0.81 4.5,2.09C13.09,3.81 14.76,3 16.5,3 19.58,3 22,5.42 22,8.5c0,3.78 -3.4,6.86 -8.55,11.54L12,21.35z"/></svg></div>
+            <span>علاقه‌مندی‌ها</span>
+          </div>
+          <div class="quick-tile" data-page="search">
+            <div class="icon-tile"><svg viewBox="0 0 24 24"><path d="M15.5,14h-0.79l-0.28,-0.27a6.5,6.5 0 1 0 -0.7,0.7l0.27,0.28v0.79l5,4.99L20.49,19l-4.99,-5zM10,14a4,4 0 1 1 0,-8 4,4 0 0 1 0,8z"/></svg></div>
+            <span>جستجو</span>
+          </div>
+          <div class="quick-tile" data-page="settings">
+            <div class="icon-tile"><svg viewBox="0 0 24 24"><path d="M19.14,12.94c0.04,-0.3 0.06,-0.61 0.06,-0.94 0,-0.32 -0.02,-0.64 -0.07,-0.94l2.03,-1.58c0.18,-0.14 0.23,-0.41 0.12,-0.61l-1.92,-3.32c-0.12,-0.22 -0.37,-0.29 -0.59,-0.22l-2.39,0.96c-0.5,-0.38 -1.03,-0.7 -1.62,-0.94l-0.36,-2.54c-0.04,-0.24 -0.24,-0.41 -0.48,-0.41h-3.84c-0.24,0 -0.43,0.17 -0.47,0.41l-0.36,2.54c-0.59,0.24 -1.13,0.57 -1.62,0.94l-2.39,-0.96c-0.22,-0.08 -0.47,0 -0.59,0.22L2.74,8.87c-0.12,0.21 -0.08,0.47 0.12,0.61l2.03,1.58c-0.05,0.3 -0.07,0.63 -0.07,0.94s0.02,0.64 0.07,0.94l-2.03,1.58c-0.18,0.14 -0.23,0.41 -0.12,0.61l1.92,3.32c0.12,0.22 0.37,0.29 0.59,0.22l2.39,-0.96c0.5,0.38 1.03,0.7 1.62,0.94l0.36,2.54c0.05,0.24 0.24,0.41 0.48,0.41h3.84c0.24,0 0.44,-0.17 0.47,-0.41l0.36,-2.54c0.59,-0.24 1.13,-0.56 1.62,-0.94l2.39,0.96c0.22,0.08 0.47,0 0.59,-0.22l1.92,-3.32c0.12,-0.21 0.07,-0.47 -0.12,-0.61l-2.01,-1.58zM12,15.6c-1.98,0 -3.6,-1.62 -3.6,-3.6s1.62,-3.6 3.6,-3.6 3.6,1.62 3.6,3.6 -1.62,3.6 -3.6,3.6z"/></svg></div>
+            <span>تنظیمات</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== FILE BROWSER PAGE ===== -->
+      <div class="page" data-page="browser">
+        <div class="browser-toolbar">
+          <div class="pill-btn" data-page="home">
+            <svg viewBox="0 0 24 24"><path d="M20,11H7.83l5.59,-5.59L12,4l-8,8 8,8 1.41,-1.41L7.83,13H20v-2z"/></svg>
+          </div>
+          <div class="breadcrumb">
+            <span class="crumb active">SanDisk 32GB</span>
+            <span class="sep">›</span>
+            <span class="crumb">Movies</span>
+            <span class="sep">›</span>
+            <span class="crumb active">2024</span>
+          </div>
+          <div class="pill-btn">
+            <svg viewBox="0 0 24 24"><path d="M3,18h6v-2H3v2zM3,6v2h18V6H3zM3,13h12v-2H3v2z"/></svg>
+          </div>
+          <div class="pill-btn">
+            <svg viewBox="0 0 24 24"><path d="M3,3v8h8V3H3zM6,6h2v2H6V6zM3,13v8h8v-8H3zM6,16h2v2H6v-2zM13,13v8h8v-8h-8zM16,16h2v2h-2v-2zM13,3v8h8V3h-8zM16,6h2v2h-2V6z"/></svg>
+          </div>
+        </div>
+
+        <div class="status-line">
+          <span>۳ پوشه، ۵ فایل</span>
+          <span class="right">Sorted: Name (A → Z)</span>
+        </div>
+
+        <div class="grid">
+          <!-- Folder -->
+          <div class="file-card">
+            <div class="preview">
+              <div class="type-chip" style="color: var(--folder);">Folder</div>
+              <svg style="color: var(--folder);" viewBox="0 0 24 24"><path d="M10,4H4c-1.11,0 -2,0.89 -2,2v12c0,1.097 0.903,2 2,2h16c1.097,0 2,-0.903 2,-2V8c0,-1.11 -0.9,-2 -2,-2h-8l-2,-2z" fill="currentColor"/></svg>
+            </div>
+            <div class="name">Action Movies</div>
+            <div class="meta">Folder · 24 items</div>
+          </div>
+          <!-- Folder -->
+          <div class="file-card">
+            <div class="preview">
+              <div class="type-chip" style="color: var(--folder);">Folder</div>
+              <svg style="color: var(--folder);" viewBox="0 0 24 24"><path d="M10,4H4c-1.11,0 -2,0.89 -2,2v12c0,1.097 0.903,2 2,2h16c1.097,0 2,-0.903 2,-2V8c0,-1.11 -0.9,-2 -2,-2h-8l-2,-2z" fill="currentColor"/></svg>
+            </div>
+            <div class="name">Documentaries</div>
+            <div class="meta">Folder · 12 items</div>
+          </div>
+          <!-- Video focused -->
+          <div class="file-card focused">
+            <div class="preview" style="background: linear-gradient(135deg, #2c4b6e, #1a2a40);">
+              <div class="type-chip" style="color: var(--video);">Video</div>
+              <div class="fav-badge">♥</div>
+              <div class="play-badge"><svg viewBox="0 0 24 24"><path d="M8,5v14l11,-7z" fill="currentColor"/></svg></div>
+            </div>
+            <div class="name">Inception 2010.mkv</div>
+            <div class="meta">4.8 GB · MKV</div>
+          </div>
+          <!-- Video -->
+          <div class="file-card">
+            <div class="preview" style="background: linear-gradient(135deg, #5e3a52, #2a1a25);">
+              <div class="type-chip" style="color: var(--video);">Video</div>
+              <div class="play-badge"><svg viewBox="0 0 24 24"><path d="M8,5v14l11,-7z" fill="currentColor"/></svg></div>
+            </div>
+            <div class="name">Interstellar.mp4</div>
+            <div class="meta">5.6 GB · MP4</div>
+          </div>
+          <!-- Audio -->
+          <div class="file-card">
+            <div class="preview">
+              <div class="type-chip" style="color: var(--audio);">Audio</div>
+              <svg style="color: var(--audio);" viewBox="0 0 24 24"><path d="M12,3v9.28c-0.47,-0.17 -0.97,-0.28 -1.5,-0.28C8.01,12 6,14.01 6,16.5S8.01,21 10.5,21c2.49,0 4.5,-2.01 4.5,-4.5V6h4V3h-7z" fill="currentColor"/></svg>
+            </div>
+            <div class="name">Pink Floyd - Time.mp3</div>
+            <div class="meta">12.4 MB · MP3</div>
+          </div>
+          <!-- Image -->
+          <div class="file-card">
+            <div class="preview" style="background: linear-gradient(135deg, #d4a574, #6b3e1e);">
+              <div class="type-chip" style="color: var(--image);">Image</div>
+            </div>
+            <div class="name">sunset_beach.jpg</div>
+            <div class="meta">3.2 MB · JPG</div>
+          </div>
+          <!-- Image -->
+          <div class="file-card">
+            <div class="preview" style="background: linear-gradient(135deg, #6a8ca8, #2a3a4a);">
+              <div class="type-chip" style="color: var(--image);">Image</div>
+            </div>
+            <div class="name">mountain_view.jpg</div>
+            <div class="meta">4.1 MB · JPG</div>
+          </div>
+          <!-- Subtitle -->
+          <div class="file-card">
+            <div class="preview">
+              <div class="type-chip" style="color: var(--subtitle);">Subtitle</div>
+              <svg style="color: var(--subtitle);" viewBox="0 0 24 24"><path d="M14,2H6c-1.1,0 -2,0.9 -2,2v16c0,1.1 0.89,2 2,2h12c1.1,0 2,-0.9 2,-2V8l-6,-6zM6,20V4h7v5h5v11H6z" fill="currentColor"/></svg>
+            </div>
+            <div class="name">subtitles.srt</div>
+            <div class="meta">87 KB · SRT</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== VIDEO PLAYER PAGE ===== -->
+      <div class="page" data-page="video">
+        <div class="video-stage">
+          <img class="poster" src="https://picsum.photos/seed/wmp/1280/640" alt="">
+          <div class="video-overlay-top" data-page="browser">
+            <svg viewBox="0 0 24 24"><path d="M20,11H7.83l5.59,-5.59L12,4l-8,8 8,8 1.41,-1.41L7.83,13H20v-2z" fill="currentColor"/></svg>
+          </div>
+          <div class="video-strip">
+            <div class="progress"><div></div></div>
+            <div class="row">
+              <span class="time">0:42:18</span>
+              <div class="controls">
+                <div class="vbtn"><svg viewBox="0 0 24 24"><path d="M11,18V6l-8.5,6 8.5,6zM13,6v12l8.5,-6L13,6z" fill="currentColor" transform="scale(-1,1) translate(-24,0)"/></svg></div>
+                <div class="vbtn primary"><svg viewBox="0 0 24 24"><path d="M6,5h4v14H6zM14,5h4v14h-4z" fill="currentColor"/></svg></div>
+                <div class="vbtn"><svg viewBox="0 0 24 24"><path d="M11,18V6l-8.5,6 8.5,6zM13,6v12l8.5,-6L13,6z" fill="currentColor"/></svg></div>
+              </div>
+              <span class="time">2:48:32</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== MUSIC PLAYER PAGE ===== -->
+      <div class="page" data-page="music">
+        <div class="music-stage">
+          <div class="album">
+            <svg viewBox="0 0 24 24"><path d="M12,3v9.28c-0.47,-0.17 -0.97,-0.28 -1.5,-0.28C8.01,12 6,14.01 6,16.5S8.01,21 10.5,21c2.49,0 4.5,-2.01 4.5,-4.5V6h4V3h-7z" fill="currentColor"/></svg>
+          </div>
+          <div>
+            <div class="track">Pink Floyd - Time.mp3</div>
+            <div class="now-playing">در حال پخش</div>
+          </div>
+          <div class="progress-container">
+            <div class="progress-bar"><div></div></div>
+            <div class="progress-time">
+              <span>2:14</span>
+              <span>6:43</span>
+            </div>
+          </div>
+          <div class="music-controls">
+            <div class="vbtn"><svg viewBox="0 0 24 24"><path d="M11,18V6l-8.5,6 8.5,6zM13,6v12l8.5,-6L13,6z" fill="currentColor" transform="scale(-1,1) translate(-24,0)"/></svg></div>
+            <div class="vbtn"><svg viewBox="0 0 24 24"><path d="M6,6h2v12H6zM9.5,12l8.5,6V6z" fill="currentColor"/></svg></div>
+            <div class="vbtn primary"><svg viewBox="0 0 24 24"><path d="M6,5h4v14H6zM14,5h4v14h-4z" fill="currentColor"/></svg></div>
+            <div class="vbtn"><svg viewBox="0 0 24 24"><path d="M6,6h2v12H6zM9.5,12l8.5,6V6z" fill="currentColor" transform="scale(-1,1) translate(-24,0)"/></svg></div>
+            <div class="vbtn"><svg viewBox="0 0 24 24"><path d="M11,18V6l-8.5,6 8.5,6zM13,6v12l8.5,-6L13,6z" fill="currentColor"/></svg></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== IMAGE VIEWER PAGE ===== -->
+      <div class="page" data-page="image">
+        <div class="image-stage">
+          <img src="https://picsum.photos/seed/w11photo/1280/640" alt="">
+          <div class="image-counter">۱ / ۱۲ · sunset_beach.jpg</div>
+          <div class="image-controls">
+            <button><svg viewBox="0 0 24 24"><path d="M6,6h2v12H6zM9.5,12l8.5,6V6z" fill="currentColor" transform="scale(-1,1) translate(-24,0)"/></svg></button>
+            <button><svg viewBox="0 0 24 24"><path d="M15.5,14h-0.79l-0.28,-0.27a6.5,6.5 0 1 0 -0.7,0.7l0.27,0.28v0.79l5,4.99L20.49,19l-4.99,-5zM10,14a4,4 0 1 1 0,-8 4,4 0 0 1 0,8z" fill="currentColor"/></svg></button>
+            <button class="primary"><svg viewBox="0 0 24 24"><path d="M6,6h2v12H6zM9.5,12l8.5,6V6z" fill="currentColor"/></svg></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== RECENT PAGE ===== -->
+      <div class="page" data-page="recent">
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <div style="width: 48px; height: 48px; border-radius: 10px; background: linear-gradient(135deg, var(--accent), var(--accent-dim)); display: flex; align-items: center; justify-content: center; color: black;">
+            <svg style="width: 26px; height: 26px;" viewBox="0 0 24 24"><path d="M13,3a9,9 0,0 0 -9,9L1,12l3.89,3.89 0.07,0.14L9,12L6,12a7,7 0 0 1 7,-7 7,7 0 0 1 7,7 7,7 0 0 1 -7,7c-1.93,0 -3.68,-0.79 -4.94,-2.06l-1.42,1.42A9,9 0 1 0 13,3zM12,8v5l4.28,2.54 0.72,-1.21 -3.5,-2.08L13,8z" fill="currentColor"/></svg>
+          </div>
+          <div>
+            <div class="page-title">اخیراً پخش‌شده</div>
+            <div class="page-sub">Last played media files</div>
+          </div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 4px; margin-top: 12px;">
+          <div class="list-row focused">
+            <div class="icon-tile" style="background: rgba(76,194,255,0.15); color: var(--video);"><svg style="width: 18px; height: 18px;" viewBox="0 0 24 24"><path d="M21,3H3c-1.11,0 -2,0.89 -2,2v12c0,1.097 0.903,2 2,2h16c1.097,0 2,-0.903 2,-2V8c0,-1.11 -0.9,-2 -2,-2h-8l-2,-2z" fill="currentColor"/></svg></div>
+            <div class="info">
+              <span class="name">Inception 2010.mkv</span>
+              <span class="meta">Video · 4.8 GB</span>
+            </div>
+          </div>
+          <div class="list-row">
+            <div class="icon-tile" style="background: rgba(233,114,152,0.15); color: var(--audio);"><svg style="width: 18px; height: 18px;" viewBox="0 0 24 24"><path d="M12,3v9.28c-0.47,-0.17 -0.97,-0.28 -1.5,-0.28C8.01,12 6,14.01 6,16.5S8.01,21 10.5,21c2.49,0 4.5,-2.01 4.5,-4.5V6h4V3h-7z" fill="currentColor"/></svg></div>
+            <div class="info">
+              <span class="name">Pink Floyd - Time.mp3</span>
+              <span class="meta">Audio · 12.4 MB</span>
+            </div>
+          </div>
+          <div class="list-row">
+            <div class="icon-tile" style="background: rgba(124,224,192,0.15); color: var(--image);"><svg style="width: 18px; height: 18px;" viewBox="0 0 24 24"><path d="M19,5v14H5V5h14m0,-2H5c-1.1,0 -2,0.9 -2,2v14c0,1.1 0.9,2 2,2h14c1.1,0 2,-0.9 2,-2V5c0,-1.1 -0.9,-2 -2,-2zm-4.86,8.86l-3,3.87L9,13.14 6,17h12l-3.86,-5.14z" fill="currentColor"/></svg></div>
+            <div class="info">
+              <span class="name">sunset_beach.jpg</span>
+              <span class="meta">Image · 3.2 MB</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== FAVORITES PAGE ===== -->
+      <div class="page" data-page="favorites">
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <div style="width: 48px; height: 48px; border-radius: 10px; background: linear-gradient(135deg, var(--accent), var(--accent-dim)); display: flex; align-items: center; justify-content: center; color: black;">
+            <svg style="width: 26px; height: 26px;" viewBox="0 0 24 24"><path d="M12,21.35l-1.45,-1.32C5.4,15.36 2,12.28 2,8.5 2,5.42 4.42,3 7.5,3c1.74,0 3.41,0.81 4.5,2.09C13.09,3.81 14.76,3 16.5,3 19.58,3 22,5.42 22,8.5c0,3.78 -3.4,6.86 -8.55,11.54L12,21.35z" fill="currentColor"/></svg>
+          </div>
+          <div>
+            <div class="page-title">علاقه‌مندی‌ها</div>
+            <div class="page-sub">Pinned files for quick access</div>
+          </div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 4px; margin-top: 12px;">
+          <div class="list-row">
+            <div class="icon-tile" style="background: rgba(76,194,255,0.15); color: var(--video);"><svg style="width: 18px; height: 18px;" viewBox="0 0 24 24"><path d="M21,3H3c-1.11,0 -2,0.89 -2,2v12c0,1.097 0.903,2 2,2h16c1.097,0 2,-0.903 2,-2V8c0,-1.11 -0.9,-2 -2,-2h-8l-2,-2z" fill="currentColor"/></svg></div>
+            <div class="info">
+              <span class="name">Interstellar.mp4</span>
+              <span class="meta">Video · 5.6 GB</span>
+            </div>
+            <div class="trailing"><svg style="width: 16px; height: 16px;" viewBox="0 0 24 24"><path d="M12,21.35l-1.45,-1.32C5.4,15.36 2,12.28 2,8.5 2,5.42 4.42,3 7.5,3c1.74,0 3.41,0.81 4.5,2.09C13.09,3.81 14.76,3 16.5,3 19.58,3 22,5.42 22,8.5c0,3.78 -3.4,6.86 -8.55,11.54L12,21.35z" fill="currentColor"/></svg></div>
+          </div>
+          <div class="list-row">
+            <div class="icon-tile" style="background: rgba(233,114,152,0.15); color: var(--audio);"><svg style="width: 18px; height: 18px;" viewBox="0 0 24 24"><path d="M12,3v9.28c-0.47,-0.17 -0.97,-0.28 -1.5,-0.28C8.01,12 6,14.01 6,16.5S8.01,21 10.5,21c2.49,0 4.5,-2.01 4.5,-4.5V6h4V3h-7z" fill="currentColor"/></svg></div>
+            <div class="info">
+              <span class="name">Imagine - John Lennon.mp3</span>
+              <span class="meta">Audio · 4.2 MB</span>
+            </div>
+            <div class="trailing"><svg style="width: 16px; height: 16px;" viewBox="0 0 24 24"><path d="M12,21.35l-1.45,-1.32C5.4,15.36 2,12.28 2,8.5 2,5.42 4.42,3 7.5,3c1.74,0 3.41,0.81 4.5,2.09C13.09,3.81 14.76,3 16.5,3 19.58,3 22,5.42 22,8.5c0,3.78 -3.4,6.86 -8.55,11.54L12,21.35z" fill="currentColor"/></svg></div>
+          </div>
+          <div class="list-row">
+            <div class="icon-tile" style="background: rgba(124,224,192,0.15); color: var(--image);"><svg style="width: 18px; height: 18px;" viewBox="0 0 24 24"><path d="M19,5v14H5V5h14m0,-2H5c-1.1,0 -2,0.9 -2,2v14c0,1.1 0.9,2 2,2h14c1.1,0 2,-0.9 2,-2V5c0,-1.1 -0.9,-2 -2,-2zm-4.86,8.86l-3,3.87L9,13.14 6,17h12l-3.86,-5.14z" fill="currentColor"/></svg></div>
+            <div class="info">
+              <span class="name">mountain_view.jpg</span>
+              <span class="meta">Image · 4.1 MB</span>
+            </div>
+            <div class="trailing"><svg style="width: 16px; height: 16px;" viewBox="0 0 24 24"><path d="M12,21.35l-1.45,-1.32C5.4,15.36 2,12.28 2,8.5 2,5.42 4.42,3 7.5,3c1.74,0 3.41,0.81 4.5,2.09C13.09,3.81 14.76,3 16.5,3 19.58,3 22,5.42 22,8.5c0,3.78 -3.4,6.86 -8.55,11.54L12,21.35z" fill="currentColor"/></svg></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== SEARCH PAGE ===== -->
+      <div class="page" data-page="search">
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <div style="width: 48px; height: 48px; border-radius: 10px; background: linear-gradient(135deg, var(--accent), var(--accent-dim)); display: flex; align-items: center; justify-content: center; color: black;">
+            <svg style="width: 26px; height: 26px;" viewBox="0 0 24 24"><path d="M15.5,14h-0.79l-0.28,-0.27a6.5,6.5 0 1 0 -0.7,0.7l0.27,0.28v0.79l5,4.99L20.49,19l-4.99,-5zM10,14a4,4 0 1 1 0,-8 4,4 0 0 1 0,8z" fill="currentColor"/></svg>
+          </div>
+          <div>
+            <div class="page-title">جستجو</div>
+            <div class="page-sub">Find files on the selected USB drive</div>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px; height: 48px; background: var(--mica-elev); border: 2px solid var(--accent); border-radius: 6px; padding: 0 14px;">
+          <svg style="width: 18px; height: 18px; color: var(--accent);" viewBox="0 0 24 24"><path d="M15.5,14h-0.79l-0.28,-0.27a6.5,6.5 0 1 0 -0.7,0.7l0.27,0.28v0.79l5,4.99L20.49,19l-4.99,-5zM10,14a4,4 0 1 1 0,-8 4,4 0 0 1 0,8z" fill="currentColor"/></svg>
+          <span style="color: var(--text-ter); font-size: 13px;">جستجوی فایل در این فلش…</span>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <div class="list-row">
+            <div class="icon-tile" style="background: rgba(76,194,255,0.15); color: var(--video);"><svg style="width: 18px; height: 18px;" viewBox="0 0 24 24"><path d="M21,3H3c-1.11,0 -2,0.89 -2,2v12c0,1.097 0.903,2 2,2h16c1.097,0 2,-0.903 2,-2V8c0,-1.11 -0.9,-2 -2,-2h-8l-2,-2z" fill="currentColor"/></svg></div>
+            <div class="info">
+              <span class="name">Inception.mkv</span>
+              <span class="meta">Video · 4.8 GB</span>
+            </div>
+          </div>
+          <div class="list-row">
+            <div class="icon-tile" style="background: rgba(233,114,152,0.15); color: var(--audio);"><svg style="width: 18px; height: 18px;" viewBox="0 0 24 24"><path d="M12,3v9.28c-0.47,-0.17 -0.97,-0.28 -1.5,-0.28C8.01,12 6,14.01 6,16.5S8.01,21 10.5,21c2.49,0 4.5,-2.01 4.5,-4.5V6h4V3h-7z" fill="currentColor"/></svg></div>
+            <div class="info">
+              <span class="name">In_A_Gadda_Da_Vida.mp3</span>
+              <span class="meta">Audio · 8.5 MB</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== SETTINGS PAGE ===== -->
+      <div class="page" data-page="settings">
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <div style="width: 48px; height: 48px; border-radius: 10px; background: linear-gradient(135deg, var(--accent), var(--accent-dim)); display: flex; align-items: center; justify-content: center; color: black;">
+            <svg style="width: 26px; height: 26px;" viewBox="0 0 24 24"><path d="M19.14,12.94c0.04,-0.3 0.06,-0.61 0.06,-0.94 0,-0.32 -0.02,-0.64 -0.07,-0.94l2.03,-1.58c0.18,-0.14 0.23,-0.41 0.12,-0.61l-1.92,-3.32c-0.12,-0.22 -0.37,-0.29 -0.59,-0.22l-2.39,0.96c-0.5,-0.38 -1.03,-0.7 -1.62,-0.94l-0.36,-2.54c-0.04,-0.24 -0.24,-0.41 -0.48,-0.41h-3.84c-0.24,0 -0.43,0.17 -0.47,0.41l-0.36,2.54c-0.59,0.24 -1.13,0.57 -1.62,0.94l-2.39,-0.96c-0.22,-0.08 -0.47,0 -0.59,0.22L2.74,8.87c-0.12,0.21 -0.08,0.47 0.12,0.61l2.03,1.58c-0.05,0.3 -0.07,0.63 -0.07,0.94s0.02,0.64 0.07,0.94l-2.03,1.58c-0.18,0.14 -0.23,0.41 -0.12,0.61l1.92,3.32c0.12,0.22 0.37,0.29 0.59,0.22l2.39,-0.96c0.5,0.38 1.03,0.7 1.62,0.94l0.36,2.54c0.05,0.24 0.24,0.41 0.48,0.41h3.84c0.24,0 0.44,-0.17 0.47,-0.41l0.36,-2.54c0.59,-0.24 1.13,-0.56 1.62,-0.94l2.39,0.96c0.22,0.08 0.47,0 0.59,-0.22l1.92,-3.32c0.12,-0.21 0.07,-0.47 -0.12,-0.61l-2.01,-1.58zM12,15.6c-1.98,0 -3.6,-1.62 -3.6,-3.6s1.62,-3.6 3.6,-3.6 3.6,1.62 3.6,3.6 -1.62,3.6 -3.6,3.6z" fill="currentColor"/></svg>
+          </div>
+          <div class="page-title">تنظیمات</div>
+        </div>
+
+        <!-- Language card -->
+        <div class="settings-card">
+          <div class="header">
+            <div class="icon-tile"><svg style="width: 20px; height: 20px;" viewBox="0 0 24 24"><path d="M11.99,2C6.47,2 2,6.48 2,12s4.47,10 9.99,10C17.52,22 22,17.52 22,12S17.52,2 11.99,2zM18.92,8h-2.95c-0.32,-1.25 -0.78,-2.45 -1.38,-3.56 1.84,0.63 3.37,1.91 4.33,3.56zM12,4.04c0.83,1.2 1.48,2.53 1.91,3.96h-3.82c0.43,-1.43 1.08,-2.76 1.91,-3.96zM4.26,14C4.1,13.36 4,12.69 4,12s0.1,-1.36 0.26,-2h3.38c-0.08,0.66 -0.14,1.32 -0.14,2s0.06,1.36 0.14,2H4.26zM5.08,16h2.95c0.32,1.25 0.78,2.45 1.38,3.56 -1.84,-0.63 -3.37,-1.9 -4.33,-3.56zM8.03,8H5.08c0.96,-1.66 2.49,-2.93 4.33,-3.56C8.81,5.55 8.35,6.75 8.03,8zM12,19.96c-0.83,-1.2 -1.48,-2.53 -1.91,-3.96h3.82c-0.43,1.43 -1.08,2.76 -1.91,3.96zM14.34,14H9.66c-0.09,-0.66 -0.16,-1.32 -0.16,-2s0.07,-1.35 0.16,-2h4.68c0.09,0.65 0.16,1.32 0.16,2s-0.07,1.34 -0.16,2zM14.35,19.56c0.6,-1.11 1.06,-2.31 1.38,-3.56h2.95c-0.96,1.65 -2.49,2.93 -4.33,3.56zM16.36,14c0.08,-0.66 0.14,-1.32 0.14,-2s-0.06,-1.35 -0.14,-2h3.38c0.16,0.64 0.26,1.31 0.26,2s-0.1,1.36 -0.26,2h-3.38z" fill="currentColor"/></svg></div>
+            <div>
+              <div class="title">زبان</div>
+              <div class="desc">Choose the app display language</div>
+            </div>
+          </div>
+          <div class="body">
+            <div class="lang-pill-btn selected">فارسی</div>
+            <div class="lang-pill-btn">English</div>
+          </div>
+        </div>
+
+        <!-- About card -->
+        <div class="settings-card">
+          <div class="header">
+            <div class="icon-tile"><svg style="width: 20px; height: 20px;" viewBox="0 0 24 24"><path d="M11,7h2v2h-2zM11,11h2v6h-2zM12,2C6.48,2 2,6.48 2,12s4.48,10 10,10 10,-4.48 10,-10S17.52,2 12,2zM12,20c-4.41,0 -8,-3.59 -8,-8s3.59,-8 8,-8 8,3.59 8,8 -3.59,8 -8,8z" fill="currentColor"/></svg></div>
+            <div>
+              <div class="title">درباره برنامه</div>
+              <div class="desc">App info and credits</div>
+            </div>
+          </div>
+          <div class="body">
+            <div style="font-size: 16px; font-weight: 600;">Media Flash</div>
+            <div style="font-size: 12px; color: var(--text-sec); margin-top: 4px;">نسخه 1.0.0</div>
+            <div style="margin-top: 12px; background: var(--mica-elev); border: 1px solid var(--stroke-sub); border-radius: 8px; padding: 12px 14px; display: inline-block;">
+              <span style="color: var(--accent); font-size: 13px; font-weight: 600;">Created By Mohammad Shaerpour</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===== Footer (Win11 status bar style) ===== -->
+  <div class="footer">
+    <span class="dot"></span>
+    <span class="text">Created By Mohammad Shaerpour</span>
+    <span class="dot dim"></span>
+  </div>
+</div>
+
+<!-- ===== Page switcher (preview only) ===== -->
+<div class="controls">
+  <button data-page="home" class="active">🏠 خانه</button>
+  <button data-page="browser">📁 مرورگر فایل</button>
+  <button data-page="video">🎬 پخش ویدیو</button>
+  <button data-page="music">🎵 پخش آهنگ</button>
+  <button data-page="image">🖼️ نمایش عکس</button>
+  <button data-page="recent">⏱ اخیراً پخش‌شده</button>
+  <button data-page="favorites">★ علاقه‌مندی‌ها</button>
+  <button data-page="search">🔍 جستجو</button>
+  <button data-page="settings">⚙️ تنظیمات</button>
+</div>
+
+<script>
+  const pages = document.querySelectorAll('.page');
+  const navBtns = document.querySelectorAll('.nav-btn[data-page]');
+  const ctrlBtns = document.querySelectorAll('.controls button[data-page]');
+
+  function showPage(name) {
+    pages.forEach(p => p.classList.toggle('active', p.dataset.page === name));
+    navBtns.forEach(b => b.classList.toggle('active', b.dataset.page === name));
+    ctrlBtns.forEach(b => b.classList.toggle('active', b.dataset.page === name));
+  }
+
+  document.querySelectorAll('[data-page]').forEach(el => {
+    el.addEventListener('click', (e) => {
+      e.preventDefault();
+      const target = el.dataset.page;
+      if (target) showPage(target);
+    });
+  });
+</script>
+
+</body>
+</html>

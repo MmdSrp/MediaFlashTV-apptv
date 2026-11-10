@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App name -->
+    <string name="app_name">مدیا فلش</string>
+
+    <!-- Sidebar / Nav items -->
+    <string name="nav_home">خانه</string>
+    <string name="nav_recent">اخیراً پخش‌شده</string>
+    <string name="nav_favorites">علاقه‌مندی‌ها</string>
+    <string name="nav_search">جستجو</string>
+    <string name="nav_settings">تنظیمات</string>
+
+    <!-- Home screen -->
+    <string name="select_usb_title">انتخاب فلش USB</string>
+    <string name="select_usb_subtitle">یک فلش USB به تلویزیون وصل کنید و از زیر انتخاب کنید</string>
+    <string name="no_usb_found">هیچ فلشی پیدا نشد</string>
+    <string name="no_usb_hint">لطفاً یک فلش USB به پورت تلویزیون وصل کنید</string>
+    <string name="refresh">بروزرسانی</string>
+    <string name="usb_capacity">ظرفیت</string>
+    <string name="usb_free">آزاد</string>
+    <string name="usb_used">پر شده</string>
+    <string name="usb_open">باز کردن</string>
+    <string name="usb_eject">خروج امن</string>
+
+    <!-- File browser -->
+    <string name="folders">پوشه‌ها</string>
+    <string name="files">فایل‌ها</string>
+    <string name="empty_folder">این پوشه خالی است</string>
+    <string name="parent_dir">بازگشت به بالا</string>
+    <string name="items_count">%1$d آیتم</string>
+    <string name="sort_by">مرتب‌سازی بر اساس</string>
+    <string name="sort_name">نام</string>
+    <string name="sort_size">حجم</string>
+    <string name="sort_date">تاریخ</string>
+    <string name="sort_type">نوع</string>
+    <string name="view_grid">نمای شبکه‌ای</string>
+    <string name="view_list">نمای لیستی</string>
+
+    <!-- File types -->
+    <string name="type_folder">پوشه</string>
+    <string name="type_video">ویدیو</string>
+    <string name="type_audio">آهنگ</string>
+    <string name="type_image">عکس</string>
+    <string name="type_subtitle">زیرنویس</string>
+    <string name="type_document">سند</string>
+    <string name="type_archive">فایل فشرده</string>
+    <string name="type_other">فایل</string>
+
+    <!-- File info -->
+    <string name="file_info">اطلاعات فایل</string>
+    <string name="info_name">نام</string>
+    <string name="info_path">مسیر</string>
+    <string name="info_size">حجم</string>
+    <string name="info_modified">تاریخ تغییر</string>
+    <string name="info_type">نوع</string>
+    <string name="info_duration">مدت زمان</string>
+    <string name="info_resolution">ابعاد</string>
+    <string name="info_mimetype">نوع MIME</string>
+
+    <!-- Media player -->
+    <string name="play">پخش</string>
+    <string name="pause">مکث</string>
+    <string name="next">بعدی</string>
+    <string name="previous">قبلی</string>
+    <string name="stop">توقف</string>
+    <string name="rewind">۱۰ ثانیه عقب</string>
+    <string name="forward">۱۰ ثانیه جلو</string>
+    <string name="mute">بی‌صدا</string>
+    <string name="unmute">صدا دار</string>
+    <string name="playback_speed">سرعت پخش</string>
+    <string name="repeat">تکرار</string>
+    <string name="shuffle">پخش تصادفی</string>
+
+    <!-- Image viewer -->
+    <string name="image_next">عکس بعدی</string>
+    <string name="image_prev">عکس قبلی</string>
+    <string name="image_zoom">بزرگ‌نمایی</string>
+    <string name="image_rotate">چرخش</string>
+
+    <!-- Music player -->
+    <string name="now_playing">در حال پخش</string>
+    <string name="playlist">لیست پخش</string>
+    <string name="no_audio_title">بدون عنوان</string>
+    <string name="no_audio_artist">هنرمند ناشناخته</string>
+
+    <!-- Favorites -->
+    <string name="add_to_favorites">افزودن به علاقه‌مندی‌ها</string>
+    <string name="remove_from_favorites">حذف از علاقه‌مندی‌ها</string>
+    <string name="favorites_empty">هنوز علاقه‌مندی‌ای اضافه نشده. روی هر فایل طولانی فشار دهید تا اضافه شود.</string>
+
+    <!-- Recent -->
+    <string name="recent_empty">هنوز چیزی پخش نشده</string>
+    <string name="clear_recent">پاک کردن تاریخچه</string>
+
+    <!-- Search -->
+    <string name="search_hint">جستجوی فایل در این فلش…</string>
+    <string name="search_no_results">فایلی برای «%1$s» پیدا نشد</string>
+
+    <!-- Settings -->
+    <string name="settings_language">زبان</string>
+    <string name="settings_language_en">English</string>
+    <string name="settings_language_fa">فارسی</string>
+    <string name="settings_about">درباره برنامه</string>
+    <string name="settings_version">نسخه %1$s</string>
+    <string name="settings_author">Created By Mohammad Shaerpour</string>
+
+    <!-- Footer -->
+    <string name="footer_credit">Created By Mohammad Shaerpour</string>
+
+    <!-- Permission -->
+    <string name="permission_title">دسترسی لازم است</string>
+    <string name="permission_message">این برنامه برای خواندن فلش USB و پخش فایل‌ها به دسترسی ذخیره‌سازی نیاز دارد.</string>
+    <string name="permission_grant">اجازه دسترسی</string>
+
+    <!-- Errors -->
+    <string name="error_no_player">امکان پخش این نوع فایل وجود ندارد</string>
+    <string name="error_loading">بارگذاری این فایل ناموفق بود</string>
+    <string name="error_storage">دسترسی به فلش ناموفق بود</string>
+
+    <!-- Common -->
+    <string name="ok">باشه</string>
+    <string name="cancel">لغو</string>
+    <string name="close">بستن</string>
+    <string name="loading">در حال بارگذاری…</string>
+    <string name="back">بازگشت</string>
+</resources>

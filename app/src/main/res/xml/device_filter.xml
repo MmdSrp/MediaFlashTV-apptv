@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <usb-device vendor-id="0x" product-id="0x" />
+    <!-- Generic USB mass storage devices are auto-attached by Android OS; this filter allows the
+         activity to be started whenever a USB mass storage device is plugged in. -->
+</resources>

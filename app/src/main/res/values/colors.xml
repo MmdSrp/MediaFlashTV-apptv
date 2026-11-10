@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Windows 11 Mica + Acrylic dark palette (used as default in Compose) -->
+    <color name="md_background">#FF1A1A1A</color>
+    <color name="md_surface">#FF1F1F1F</color>
+    <color name="md_surface_variant">#FF2B2B2B</color>
+    <color name="md_primary">#FF00C896</color>
+    <color name="md_on_primary">#FF0A1F18</color>
+    <color name="md_secondary">#FFC5C5C5</color>
+    <color name="md_on_background">#FFFFFFFF</color>
+    <color name="md_on_surface">#FFC5C5C5</color>
+    <color name="md_outline">#FF404040</color>
+    <color name="md_error">#FFFF4444</color>
+</resources>

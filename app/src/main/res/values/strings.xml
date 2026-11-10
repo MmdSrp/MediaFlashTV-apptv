@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App name -->
+    <string name="app_name">Media Flash</string>
+
+    <!-- Sidebar / Nav items -->
+    <string name="nav_home">Home</string>
+    <string name="nav_recent">Recent</string>
+    <string name="nav_favorites">Favorites</string>
+    <string name="nav_search">Search</string>
+    <string name="nav_settings">Settings</string>
+
+    <!-- Home screen -->
+    <string name="select_usb_title">Select a USB Drive</string>
+    <string name="select_usb_subtitle">Plug a USB flash drive into your TV and choose it below</string>
+    <string name="no_usb_found">No USB drives detected</string>
+    <string name="no_usb_hint">Please insert a USB flash drive into the TV USB port</string>
+    <string name="refresh">Refresh</string>
+    <string name="usb_capacity">Capacity</string>
+    <string name="usb_free">Free</string>
+    <string name="usb_used">Used</string>
+    <string name="usb_open">Open Drive</string>
+    <string name="usb_eject">Eject</string>
+
+    <!-- File browser -->
+    <string name="folders">Folders</string>
+    <string name="files">Files</string>
+    <string name="empty_folder">This folder is empty</string>
+    <string name="parent_dir">Up one level</string>
+    <string name="items_count">%1$d items</string>
+    <string name="sort_by">Sort by</string>
+    <string name="sort_name">Name</string>
+    <string name="sort_size">Size</string>
+    <string name="sort_date">Date</string>
+    <string name="sort_type">Type</string>
+    <string name="view_grid">Grid view</string>
+    <string name="view_list">List view</string>
+
+    <!-- File types -->
+    <string name="type_folder">Folder</string>
+    <string name="type_video">Video</string>
+    <string name="type_audio">Audio</string>
+    <string name="type_image">Image</string>
+    <string name="type_subtitle">Subtitle</string>
+    <string name="type_document">Document</string>
+    <string name="type_archive">Archive</string>
+    <string name="type_other">File</string>
+
+    <!-- File info -->
+    <string name="file_info">File Information</string>
+    <string name="info_name">Name</string>
+    <string name="info_path">Path</string>
+    <string name="info_size">Size</string>
+    <string name="info_modified">Modified</string>
+    <string name="info_type">Type</string>
+    <string name="info_duration">Duration</string>
+    <string name="info_resolution">Resolution</string>
+    <string name="info_mimetype">MIME type</string>
+
+    <!-- Media player -->
+    <string name="play">Play</string>
+    <string name="pause">Pause</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+    <string name="stop">Stop</string>
+    <string name="rewind">Rewind 10s</string>
+    <string name="forward">Forward 10s</string>
+    <string name="mute">Mute</string>
+    <string name="unmute">Unmute</string>
+    <string name="playback_speed">Playback speed</string>
+    <string name="repeat">Repeat</string>
+    <string name="shuffle">Shuffle</string>
+
+    <!-- Image viewer -->
+    <string name="image_next">Next image</string>
+    <string name="image_prev">Previous image</string>
+    <string name="image_zoom">Zoom</string>
+    <string name="image_rotate">Rotate</string>
+
+    <!-- Music player -->
+    <string name="now_playing">Now Playing</string>
+    <string name="playlist">Playlist</string>
+    <string name="no_audio_title">No Title</string>
+    <string name="no_audio_artist">Unknown Artist</string>
+
+    <!-- Favorites -->
+    <string name="add_to_favorites">Add to favorites</string>
+    <string name="remove_from_favorites">Remove from favorites</string>
+    <string name="favorites_empty">No favorites yet. Long-press any file to add it here.</string>
+
+    <!-- Recent -->
+    <string name="recent_empty">No recently played media</string>
+    <string name="clear_recent">Clear recent history</string>
+
+    <!-- Search -->
+    <string name="search_hint">Search files in this USB drive…</string>
+    <string name="search_no_results">No files found for \"%1$s\"</string>
+
+    <!-- Settings -->
+    <string name="settings_language">Language</string>
+    <string name="settings_language_en">English</string>
+    <string name="settings_language_fa">فارسی</string>
+    <string name="settings_about">About</string>
+    <string name="settings_version">Version %1$s</string>
+    <string name="settings_author">Created By Mohammad Shaerpour</string>
+
+    <!-- Footer -->
+    <string name="footer_credit">Created By Mohammad Shaerpour</string>
+
+    <!-- Permission -->
+    <string name="permission_title">Permission Required</string>
+    <string name="permission_message">This app needs storage access to read USB drives and play media files.</string>
+    <string name="permission_grant">Grant access</string>
+
+    <!-- Errors -->
+    <string name="error_no_player">Cannot play this file type</string>
+    <string name="error_loading">Could not load this file</string>
+    <string name="error_storage">Could not access USB storage</string>
+
+    <!-- Common -->
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="close">Close</string>
+    <string name="loading">Loading…</string>
+    <string name="back">Back</string>
+</resources>
