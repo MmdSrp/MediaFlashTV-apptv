@@ -13,17 +13,21 @@ on:
       - main
       - master
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
-    name: Build & Release APK
-    runs-on: ubuntu-latest
+    name: Build APK
+    runs-on: ubuntu-22.04
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v5
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
@@ -33,36 +37,53 @@ jobs:
         with:
           packages: 'platform-tools build-tools;34.0.0 platforms;android-34'
 
+      - name: Accept SDK licenses
+        run: yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
+
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.7'
-          cache: true
 
-      - name: Generate Gradle wrapper
+      - name: Generate Gradle wrapper files
         run: gradle wrapper --gradle-version 8.7 --distribution-type bin
 
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
-      - name: Show project info
-        run: ./gradlew projects --no-daemon
+      - name: Print project structure (debug)
+        run: |
+          echo "=== Project structure ==="
+          find . -type f -not -path './.git/*' -not -path '*/build/*' | head -60
+          echo "=== Java files ==="
+          find . -name '*.kt' -type f | head -30
+          echo "=== Resource files ==="
+          find ./app/src/main/res -type f | head -20
+
+      - name: Print Gradle version
+        run: ./gradlew --version
 
       - name: Build debug APK
-        run: ./gradlew assembleDebug --no-daemon --stacktrace
+        run: ./gradlew assembleDebug --stacktrace --info
+
+      - name: List built APKs
+        run: |
+          echo "Built APK files:"
+          find . -name "*.apk" -type f
+          ls -la app/build/outputs/apk/debug/ || true
 
       - name: Build release APK
         if: startsWith(github.ref, 'refs/tags/v')
-        run: ./gradlew assembleRelease --no-daemon --stacktrace
+        run: ./gradlew assembleRelease --stacktrace
 
       - name: Upload APK artifacts
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v4
         with:
           name: media-flash-apk
           path: |
             app/build/outputs/apk/debug/*.apk
             app/build/outputs/apk/release/*.apk
-          if-no-files-found: ignore
+          if-no-files-found: warn
           retention-days: 30
 
       - name: Create GitHub Release
